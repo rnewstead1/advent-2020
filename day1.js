@@ -1,5 +1,4 @@
-const { readFile } = require('fs').promises
-
+const getLines = require('./file');
 const DATA_FILE = __dirname + '/data/day1.txt';
 
 function equals2020() {
@@ -32,17 +31,12 @@ const findThree = (numbers) => {
   }
 }
 
-readFile(DATA_FILE, { encoding: 'utf8' })
-  .then((expenseReport) => {
-    const expenses = expenseReport
-      .toString()
-      .trim()
-      .split('\n')
-      .map((expense) => parseInt(expense, 10));
+getLines(DATA_FILE).then((expenseReport) => {
+  const expenses = expenseReport.map((expense) => parseInt(expense, 10));
 
-    console.log('First answer: ', findTwo(expenses));
-    console.log('Second answer: ', findThree(expenses));
-  });
+  console.log('First answer: ', findTwo(expenses));
+  console.log('Second answer: ', findThree(expenses));
+});
 
 
 
