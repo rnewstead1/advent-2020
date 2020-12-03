@@ -31,11 +31,30 @@ const findThree = (numbers) => {
   }
 }
 
+const findTwoSet = (numbers, total) => {
+  const asSet = new Set(numbers);
+  for (let number of asSet) {
+    const difference = total - number;
+    if (asSet.has(difference)) {
+      return number * difference;
+    }
+  }
+}
+
+const findThreeSet = (numbers) => {
+  for (let i = 0; i < numbers.length; i++) {
+    const findTwoSetResult = findTwoSet(numbers, 2020 - numbers[i]);
+    if (findTwoSetResult) return numbers[i] * findTwoSetResult;
+  }
+}
+
 getLines(DATA_FILE).then((expenseReport) => {
   const expenses = expenseReport.map((expense) => parseInt(expense, 10));
 
   console.log('First answer: ', findTwo(expenses));
+  console.log('First answer BETTER: ', findTwoSet(expenses, 2020));
   console.log('Second answer: ', findThree(expenses));
+  console.log('Second answer BETTER: ', findThreeSet(expenses));
 });
 
 
