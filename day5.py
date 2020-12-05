@@ -10,15 +10,15 @@ def bitwise_shift(code, one_symbol):
 
 def missing_seat_id(ids):
     ids.sort()
-    my_seat_id = 0
+    missing_id = 0
 
     for i, id in enumerate(ids):
         next_seat_id = ids[i + 1]
         if next_seat_id - id != 1:
-          my_seat_id = id + 1
+          missing_id = id + 1
           break
 
-    return my_seat_id
+    return missing_id
 
 def all_seat_ids(seat_codes):
     seat_ids = []
