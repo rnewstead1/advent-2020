@@ -21,15 +21,15 @@ def get_groups(lines):
     return groups
 
 
-def any_yes_answers(sum, group):
+def any_yes_answers(group):
     yes_answers = set()
     for persons_answers in group:
         for answer in persons_answers:
             yes_answers.add(answer)
-    return sum + len(yes_answers)
+    return len(yes_answers)
 
 
-def all_yes_answers(sum, group):
+def all_yes_answers(group):
     def as_set(answers):
         answer_set = set()
         for answer in answers:
@@ -37,14 +37,14 @@ def all_yes_answers(sum, group):
         return answer_set
 
     all_answers = [as_set(persons_answers) for persons_answers in group]
-    return sum + len(all_answers[0].intersection(*all_answers[1:]))
+    return len(all_answers[0].intersection(*all_answers[1:]))
 
 
 with open(DATA_FILE) as file:
     groups = get_groups([line.rstrip() for line in file.readlines()])
 
-    sum_of_any_yes = reduce(any_yes_answers, groups, 0)
+    sum_of_any_yes = reduce(lambda sum, group: sum + any_yes_answers(group), groups, 0)
     print(f'sum of any yes answers: {sum_of_any_yes}')
 
-    sum_of_all_yes = reduce(all_yes_answers, groups, 0)
+    sum_of_all_yes = reduce(lambda sum, group: sum + all_yes_answers(group), groups, 0)
     print(f'sum of any yes answers: {sum_of_all_yes}')
