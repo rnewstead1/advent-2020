@@ -36,8 +36,7 @@ with open(DATA_FILE) as file:
                 bags |= bag_colors(found)
         return bags
 
-    available_rules = bag_colors('shiny gold')
-    print(f'Number of available rules: {len(available_rules)}')
+    print(f'Number of available rules: {len(bag_colors("shiny gold"))}')
 
     def total_bags(color):
         total = 0
