@@ -1,21 +1,21 @@
-DATA_FILE = './data/example12.txt'
+DATA_FILE = './data/day12.txt'
 all_directions = ['N', 'E', 'S', 'W']
 
 
-def north(current, value):
-    return current[0], current[1] + value, current[2]
+def north(position, value):
+    return position[0], position[1] + value
 
 
-def south(current, value):
-    return current[0], current[1] - value, current[2]
+def south(position, value):
+    return position[0], position[1] - value
 
 
-def east(current, value):
-    return current[0] + value, current[1], current[2]
+def east(position, value):
+    return position[0] + value, position[1]
 
 
-def west(current, value):
-    return current[0] - value, current[1], current[2]
+def west(position, value):
+    return position[0] - value, position[1]
 
 
 def right(current, value):
@@ -31,27 +31,86 @@ def left(current, value):
 
 
 def move_forward(current, value):
-    return move[current[2]](current, value)
+    return move_ship[current[2]](current, value)
 
 
-move = {
+def move_ship_towards(compass_point):
+    return lambda position, value: (*compass_point((position[0], position[1]), value), position[2])
+
+
+move_ship = {
     'F': move_forward,
-    'N': north,
-    'S': south,
-    'E': east,
-    'W': west,
+    'N': move_ship_towards(north),
+    'S': move_ship_towards(south),
+    'E': move_ship_towards(east),
+    'W': move_ship_towards(west),
     'R': right,
     'L': left
 }
 
 
-def move_all(instructions):
+def all_ship_moves(instructions):
     current = 0, 0, 'E'
     for instruction in instructions:
         action = instruction[0]
         value = int(instruction[1:])
-        current = move[action](current, value)
+        current = move_ship[action](current, value)
     return current
+
+
+def move_beacon_towards(compass_point):
+    return lambda ship, beacon, value: (ship, compass_point(beacon, value))
+
+
+def move_ship_toward_beacon(ship, beacon, value):
+    return (north(east(ship, value * beacon[0]), value * beacon[1])), beacon
+
+
+def rotation_times(value):
+    return int((value / 90) % 4)
+
+
+def right_around_ship(ship, beacon, value):
+    return ship, rotate(beacon, beacon_right, rotation_times(value))
+
+
+def rotate(beacon, direction, times):
+    for i in range(times):
+        beacon = direction(beacon)
+    return beacon
+
+
+def beacon_right(beacon):
+    return beacon[1], beacon[0] * -1
+
+
+def beacon_left(beacon):
+    return beacon[1] * -1, beacon[0]
+
+
+def left_around_ship(ship, beacon, value):
+    return ship, rotate(beacon, beacon_left, rotation_times(value))
+
+
+move_beacon = {
+    'F': move_ship_toward_beacon,
+    'N': move_beacon_towards(north),
+    'S': move_beacon_towards(south),
+    'E': move_beacon_towards(east),
+    'W': move_beacon_towards(west),
+    'R': right_around_ship,
+    'L': left_around_ship
+}
+
+
+def all_beacon_moves(instructions):
+    ship = 0, 0
+    beacon = 10, 1
+    for instruction in instructions:
+        action = instruction[0]
+        value = int(instruction[1:])
+        ship, beacon = move_beacon[action](ship, beacon, value)
+    return ship
 
 
 def manhattan_distance(end_position):
@@ -60,7 +119,9 @@ def manhattan_distance(end_position):
 
 with open(DATA_FILE) as file:
     lines = file.readlines()
-    final_position = move_all(lines)
 
-    print(f'final_position: {final_position}')
-    print(f'manhattan distance: {manhattan_distance(final_position)}')
+    ship_final_position = all_ship_moves(lines)
+    print(f'manhattan distance for ship only: {manhattan_distance(ship_final_position)}')
+
+    ship_with_beacon_final_position = all_beacon_moves(lines)
+    print(f'manhattan distance for ship with beacon: {manhattan_distance(ship_with_beacon_final_position)}')
