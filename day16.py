@@ -1,6 +1,6 @@
 import re
 
-DATA_FILE = './data/day15.txt'
+DATA_FILE = './data/day16.txt'
 rule_pattern = re.compile('.+: (?P<lower_1>[0-9]+)-(?P<upper_1>[0-9]+) or (?P<lower_2>[0-9]+)-(?P<upper_2>[0-9]+)')
 
 
