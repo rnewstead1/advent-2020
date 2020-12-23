@@ -47,6 +47,37 @@ def get_appearances(foods, appearance_map):
     return total
 
 
+def single_value(all_values):
+    for values in all_values:
+        if len(values) != 1:
+            return False
+    return True
+
+
+def get_dangerous_foods(allergen_map):
+    allergens = allergen_map
+    while not single_value(allergens.values()):
+        remove_singletons_from_other_allergens(allergens)
+    return allergens
+
+
+def remove_singletons_from_other_allergens(allergens):
+    for allergen in allergens.keys():
+        foods = allergens[allergen]
+        if len(foods) == 1:
+            food = foods.pop()
+            foods.add(food)
+            for other_allergy in allergens.keys():
+                dangerous = allergens[other_allergy]
+                if allergen != other_allergy and food in dangerous:
+                    dangerous.remove(food)
+                    allergens[other_allergy] = dangerous
+
+
+def get_sorted_foods_by_allergen(foods):
+    return ','.join([foods[allergen].pop() for allergen in (sorted(foods.keys()))])
+
+
 with open(DATA_FILE) as file:
     lines = file.readlines()
 
@@ -58,3 +89,7 @@ with open(DATA_FILE) as file:
 
     appearances = get_appearances(foods_without_allergies, all_foods)
     print(f'Number of appearances of food without allergies: {appearances}')
+
+    dangerous_foods = get_dangerous_foods(allergen_map)
+    sorted_dangerous_foods = get_sorted_foods_by_allergen(dangerous_foods)
+    print(f'sorted_dangerous_foods: {sorted_dangerous_foods}')
