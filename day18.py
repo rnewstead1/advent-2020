@@ -54,8 +54,27 @@ def parse(input_string):
     return total
 
 
+def sub_in_order(subs, text):
+    for key in subs.keys():
+        text = re.sub(key, subs[key], text)
+    return text
+
+
+def with_operator_precedence(line):
+    substitutions = {
+        '\\(': '(((',
+        '\\)': ')))',
+        '\\+': ')+(',
+        '\\*': '))*(('
+    }
+    return '((' + sub_in_order(substitutions, line) + '))'
+
+
 with open(DATA_FILE) as file:
     lines = file.readlines()
 
     sums = [parse(line.replace(' ', '').rstrip()) for line in lines]
     print(f'sum: {sum(sums)}')
+
+    sums_part_two = [eval(with_operator_precedence(line.rstrip())) for line in lines]
+    print(f'sum part two: {sum(sums_part_two)}')
